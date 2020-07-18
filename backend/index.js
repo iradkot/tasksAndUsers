@@ -20,15 +20,31 @@ app.post('/tasks', async(req, res) => {
             "INSERT INTO tasks (description) VALUES($1) RETURNING *",
             [description]
         );
-        
         res.json(newTask.rows[0]);
     } catch (e) {
-        console.log('todos post e:', e);
+        console.error(e);
     }
 })
 
  //get all todos
+app.get('/tasks', async (req,res) => {
+    try {
+        const allTasks = await pool.query('SELECT * FROM tasks');
+        res.json(allTasks.rows)
+    } catch (e) {
+        console.error(e);
+    }
+})
  //get a todo
+app.get('/tasks/:id', async (req,res) => {
+    try {
+        const { id } = req.params;
+        const task = await pool.query('SELECT * FROM tasks WHERE task_id = $1', [id]);
+        res.json(task.rows[0])
+    } catch (e) {
+        console.error(e);
+    }
+})
  //update a todo
  //delete a todo
 
