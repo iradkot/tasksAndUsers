@@ -9,7 +9,7 @@ export const addATask = ({ description }) => {
   return instance.post(routes.tasks, {description});
 };
 export const editATask = ({ description, id }) => {
-  return instance.post(routes.task(id), {description});
+  return instance.put(routes.task(id), {description});
 };
 export const deleteATask = ({ id }) => {
   return instance.delete(routes.task(id));

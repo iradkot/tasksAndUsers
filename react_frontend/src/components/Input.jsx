@@ -3,6 +3,7 @@ import TextField from '@material-ui/core/TextField';
 
 const Input = ({ error, label, value, onChange }) => (
     <TextField id={ label } value={ value } onChange={ onChange }
+               fullWidth
                label={ label } error={ !!error } helperText={ error }/>
 );
 

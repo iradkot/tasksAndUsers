@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -30,6 +30,39 @@ const AddTaskForm = styled.div`
   display: flex;
 `;
 
+const ListItemComponents = ({ description, task_id, isEdited, setEditedItem, handleEditItem, handleDeleteItem }) => {
+    const [descValue, setDescValue] = useState(description);
+    const [ error, setError ] = useState('');
+    const handleEditDescValue = useCallback((e) => setDescValue(e.target.value), []);
+    const handleCancelPress = useCallback(() => {
+        setDescValue(description);
+        setEditedItem('')
+    }, []);
+    
+    const LeftIcon = isEdited ? DoneIcon : EditIcon;
+    const LeftCallback = isEdited ? () => handleEditItem({task_id, description: descValue}) : () => setEditedItem(task_id);
+    const RightIcon = isEdited ? CloseIcon : DeleteIcon;
+    const RightCallback = isEdited ? handleCancelPress : () => handleDeleteItem(task_id);
+    return (
+        <ListItem key={ task_id }>
+            <IconButton edge="start" aria-label="edit" onClick={ LeftCallback }>
+                <LeftIcon/>
+            </IconButton>
+            { isEdited ?
+                <Input value={ descValue } onChange={ handleEditDescValue } error={ error }/>
+                : <ListItemText
+                    primary={ description + '-' + task_id }
+                /> }
+            <ListItemSecondaryAction>
+                <IconButton edge="end" aria-label="delete" onClick={ RightCallback }>
+                    <RightIcon/>
+                </IconButton>
+            </ListItemSecondaryAction>
+        </ListItem>
+    );
+}
+
+
 function App() {
     const [ tasksData, setTaskData ] = useState([]);
     const [ editedItem, setEditedItem ] = useState('');
@@ -48,14 +81,14 @@ function App() {
     
     const addTask = useCallback(async () => {
         try {
-            const { data } = await apiRequests.addATask({description});
-            console.log({data})
+            const { data } = await apiRequests.addATask({ description });
+            console.log({ data })
             await getAllTasks();
             setDescription('');
         } catch (e) {
             console.log({ e })
         }
-    }, [description]);
+    }, [ description ]);
     
     useEffect(() => {
         getAllTasks();
@@ -66,53 +99,35 @@ function App() {
             await apiRequests.deleteATask({ id: task_id });
             await getAllTasks();
         } catch (e) {
-            console.log({e});
+            console.log({ e });
         }
     }, []);
     
-    const handleEditItem = useCallback(async (event) => {
+    const handleEditItem = useCallback(async ({ task_id, description }) => {
         try {
-            console.log({event})
+            await apiRequests.editATask({ description, id: task_id });
+            await getAllTasks();
+            setEditedItem('');
         } catch (e) {
-            console.log({e});
+            console.log({ e });
         }
     }, []);
-
-    const ListItemComponents = useCallback(({ description, task_id}) => {
-        const isEdited = editedItem === task_id;
-        const LeftIcon = isEdited ? DoneIcon : EditIcon;
-        const LeftCallback = isEdited ? handleEditItem : () => setEditedItem(task_id);
-        const RightIcon = isEdited ? CloseIcon : DeleteIcon;
-        const RightCallback = isEdited ? () => setEditedItem('') : () => handleDeleteItem(task_id);
-        return (
-            <ListItem key={ task_id }>
-                <IconButton edge="start" aria-label="edit" onClick={LeftCallback}>
-                    <LeftIcon/>
-                </IconButton>
-                <ListItemText
-                    primary={ description + '-' + task_id }
-                />
-                <ListItemSecondaryAction>
-                    <IconButton edge="end" aria-label="delete" onClick={RightCallback}>
-                        <RightIcon/>
-                    </IconButton>
-                </ListItemSecondaryAction>
-            </ListItem>
-        );
-    }, [editedItem])
     
     return (
         <Container>
             <TitleText>Tasks manager</TitleText>
             <AddTaskForm>
                 <Input value={ description } onChange={ handleChangeDesc } label="Add task" error={ error }/>
-                <IconButton aria-label="edit" onClick={addTask}>
+                <IconButton aria-label="edit" onClick={ addTask }>
                     <AddCircleOutline/>
                 </IconButton>
             </AddTaskForm>
-            <List>
+            <List style={{ width: '80%' }}>
                 { tasksData.map(({ description, task_id }) => (
-                    <ListItemComponents description={description} task_id={task_id} key={task_id} />
+                    <ListItemComponents description={ description } task_id={ task_id } key={ task_id }
+                                        isEdited={ editedItem === task_id } handleDeleteItem={ handleDeleteItem }
+                                        handleEditItem={ handleEditItem } setEditedItem={ setEditedItem }
+                    />
                 )) }
             </List>
         </Container>
