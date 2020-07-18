@@ -123,7 +123,7 @@ function App() {
                 </IconButton>
             </AddTaskForm>
             <List style={{ width: '80%' }}>
-                { tasksData.map(({ description, task_id }) => (
+                { tasksData.sort(({ task_id }, {task_id: task_id2 }) => task_id- task_id2).map(({ description, task_id }) => (
                     <ListItemComponents description={ description } task_id={ task_id } key={ task_id }
                                         isEdited={ editedItem === task_id } handleDeleteItem={ handleDeleteItem }
                                         handleEditItem={ handleEditItem } setEditedItem={ setEditedItem }
