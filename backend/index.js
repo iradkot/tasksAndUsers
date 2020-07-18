@@ -10,8 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 // ROUTES //
- //create a todo
-
+ //create a task
 app.post('/tasks', async(req, res) => {
     try {
         const { description } = req.body;
@@ -26,7 +25,7 @@ app.post('/tasks', async(req, res) => {
     }
 })
 
- //get all todos
+ //get all tasks
 app.get('/tasks', async (req,res) => {
     try {
         const allTasks = await pool.query('SELECT * FROM tasks');
@@ -35,7 +34,7 @@ app.get('/tasks', async (req,res) => {
         console.error(e);
     }
 })
- //get a todo
+ //get a task
 app.get('/tasks/:id', async (req,res) => {
     try {
         const { id } = req.params;
@@ -45,7 +44,7 @@ app.get('/tasks/:id', async (req,res) => {
         console.error(e);
     }
 })
- //update a todo
+ //update a task
 app.put('/tasks/:id', async (req,res) => {
     try {
         const { id } = req.params;
@@ -56,12 +55,12 @@ app.put('/tasks/:id', async (req,res) => {
         console.error(e);
     }
 })
- //delete a todo
+ //delete a task
 app.delete('/tasks/:id', async (req,res) => {
     try {
         const { id } = req.params;
         const deleteTask = await pool.query('DELETE FROM tasks WHERE task_id=$1', [id]);
-        res.json(deleteTask);
+        res.json(`Task-${id} was deleted.`);
     } catch (e) {
         console.error(e);
     }
