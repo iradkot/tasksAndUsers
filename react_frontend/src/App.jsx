@@ -43,6 +43,17 @@ function App() {
         }
     }, []);
     
+    const addTask = useCallback(async () => {
+        try {
+            const { data } = await apiRequests.addATask({description});
+            console.log({data})
+            await getAllTasks();
+            console.log('finished!')
+        } catch (e) {
+            console.log({ e })
+        }
+    }, [description]);
+    
     useEffect(() => {
         getAllTasks();
     }, []);
@@ -52,7 +63,7 @@ function App() {
             <TitleText>Tasks manager</TitleText>
             <AddTaskForm>
                 <Input value={ description } onChange={ handleChangeDesc } label="Add task" error={ error }/>
-                <IconButton edge="start" aria-label="edit">
+                <IconButton aria-label="edit" onClick={addTask}>
                     <AddCircleOutline/>
                 </IconButton>
             </AddTaskForm>
