@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -8,6 +8,8 @@ import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
+import DoneIcon from '@material-ui/icons/Done';
+import CloseIcon from '@material-ui/icons/Close';
 
 import * as apiRequests from './api/requests';
 import Input from './components/Input';
@@ -30,6 +32,7 @@ const AddTaskForm = styled.div`
 
 function App() {
     const [ tasksData, setTaskData ] = useState([]);
+    const [ editedItem, setEditedItem ] = useState('');
     const [ description, setDescription ] = useState('');
     const [ error, setError ] = useState('');
     const handleChangeDesc = useCallback((e) => setDescription(e.target.value), []);
@@ -48,7 +51,7 @@ function App() {
             const { data } = await apiRequests.addATask({description});
             console.log({data})
             await getAllTasks();
-            console.log('finished!')
+            setDescription('');
         } catch (e) {
             console.log({ e })
         }
@@ -57,6 +60,46 @@ function App() {
     useEffect(() => {
         getAllTasks();
     }, []);
+    
+    const handleDeleteItem = useCallback(async (task_id) => {
+        try {
+            await apiRequests.deleteATask({ id: task_id });
+            await getAllTasks();
+        } catch (e) {
+            console.log({e});
+        }
+    }, []);
+    
+    const handleEditItem = useCallback(async (event) => {
+        try {
+            console.log({event})
+        } catch (e) {
+            console.log({e});
+        }
+    }, []);
+
+    const ListItemComponents = useCallback(({ description, task_id}) => {
+        const isEdited = editedItem === task_id;
+        const LeftIcon = isEdited ? DoneIcon : EditIcon;
+        const LeftCallback = isEdited ? handleEditItem : () => setEditedItem(task_id);
+        const RightIcon = isEdited ? CloseIcon : DeleteIcon;
+        const RightCallback = isEdited ? () => setEditedItem('') : () => handleDeleteItem(task_id);
+        return (
+            <ListItem key={ task_id }>
+                <IconButton edge="start" aria-label="edit" onClick={LeftCallback}>
+                    <LeftIcon/>
+                </IconButton>
+                <ListItemText
+                    primary={ description + '-' + task_id }
+                />
+                <ListItemSecondaryAction>
+                    <IconButton edge="end" aria-label="delete" onClick={RightCallback}>
+                        <RightIcon/>
+                    </IconButton>
+                </ListItemSecondaryAction>
+            </ListItem>
+        );
+    }, [editedItem])
     
     return (
         <Container>
@@ -69,19 +112,7 @@ function App() {
             </AddTaskForm>
             <List>
                 { tasksData.map(({ description, task_id }) => (
-                    <ListItem key={ task_id }>
-                        <IconButton edge="start" aria-label="edit">
-                            <EditIcon/>
-                        </IconButton>
-                        <ListItemText
-                            primary={ description + '-' + task_id }
-                        />
-                        <ListItemSecondaryAction>
-                            <IconButton edge="end" aria-label="delete">
-                                <DeleteIcon/>
-                            </IconButton>
-                        </ListItemSecondaryAction>
-                    </ListItem>
+                    <ListItemComponents description={description} task_id={task_id} key={task_id} />
                 )) }
             </List>
         </Container>
