@@ -1,4 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import {
+    Link,
+} from "react-router-dom";
 import styled from 'styled-components';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -58,6 +61,7 @@ const ListItemComponents = ({ userData, user_id, isEdited, setEditedItem, handle
                         primary={ `${ editedUserData[key] }` }
                     />
             ) }
+            {!isEdited && <Link to={`/tasks/${user_id}`}>Go to tasks</Link>}
             <ListItemSecondaryAction>
                 <IconButton edge="end" aria-label="delete" onClick={ RightCallback }>
                     <RightIcon/>

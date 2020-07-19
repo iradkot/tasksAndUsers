@@ -1,4 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import {
+    useParams
+} from "react-router-dom";
 import styled from 'styled-components';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -64,6 +67,7 @@ const ListItemComponents = ({ description, task_id, isEdited, setEditedItem, han
 
 
 function Tasks() {
+    const { userId } = useParams();
     const [ tasksData, setTaskData ] = useState([]);
     const [ editedItem, setEditedItem ] = useState('');
     const [ description, setDescription ] = useState('');
