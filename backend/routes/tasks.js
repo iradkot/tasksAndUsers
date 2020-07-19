@@ -1,20 +1,9 @@
 const express = require('express');
-const app = express();
-const cors = require('cors');
-const pool = require('./db');
+const router = express.Router();
+const pool = require('../db');
 
-const port = 5000
-
-// middleware
-app.use(cors());
-app.use(express.json());
-
-// ROUTES //
-
-const usersRouter = require('./routes/users');
-app.use('/users', usersRouter);
- //get all tasks
-app.get('/tasks', async (req,res) => {
+//get all tasks
+router.get('/', async (req,res) => {
     try {
         const allTasks = await pool.query('SELECT * FROM tasks');
         res.json(allTasks.rows)
@@ -22,8 +11,8 @@ app.get('/tasks', async (req,res) => {
         console.error(e);
     }
 })
- //get a task
-app.get('/tasks/:id', async (req,res) => {
+//get a task
+router.get('/:id', async (req,res) => {
     try {
         const { id } = req.params;
         const task = await pool.query('SELECT * FROM tasks WHERE task_id = $1', [id]);
@@ -32,8 +21,8 @@ app.get('/tasks/:id', async (req,res) => {
         console.error(e);
     }
 })
- //update a task
-app.put('/tasks/:id', async (req,res) => {
+//update a task
+router.put('/:id', async (req,res) => {
     try {
         const { id } = req.params;
         const { description } = req.body;
@@ -43,8 +32,8 @@ app.put('/tasks/:id', async (req,res) => {
         console.error(e);
     }
 })
- //delete a task
-app.delete('/tasks/:id', async (req,res) => {
+//delete a task
+router.delete('/:id', async (req,res) => {
     try {
         const { id } = req.params;
         const deleteTask = await pool.query('DELETE FROM tasks WHERE task_id=$1', [id]);
@@ -54,6 +43,4 @@ app.delete('/tasks/:id', async (req,res) => {
     }
 })
 
-app.listen(port, () => {
-    console.log(`server has started on port ${port}`)
-})
+module.exports = router;
