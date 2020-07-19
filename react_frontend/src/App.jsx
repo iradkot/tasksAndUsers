@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Users from './pages/Users';
 import Tasks from './pages/Tasks';
 
@@ -7,8 +8,18 @@ const App = () => {
     const handleSelectingUser = useCallback((userId) => {
         setSelectedUser(userId);
     }, []);
-    if(selectedUser) return <Tasks selectedUser={selectedUser} />
-    return <Users handleSelectingUser={handleSelectingUser} />
+    return (
+        <Router>
+            <Switch>
+                <Route path="/tasks">
+                    <Tasks/>
+                </Route>
+                <Route path="/">
+                    <Users/>
+                </Route>
+            </Switch>
+        </Router>
+    )
 }
 
 export default App
