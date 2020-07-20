@@ -85,7 +85,6 @@ function Tasks() {
     const getUserTasks = useCallback(async () => {
         try {
             const { data } = await apiRequests.getUserTasks(userId);
-            console.log({data });
             setTaskData(data);
         } catch (e) {
             console.log({ e })

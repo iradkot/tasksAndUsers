@@ -71,7 +71,7 @@ const ListItemComponents = ({ userData, user_id, isEdited, setEditedItem, handle
     );
 }
 
-const emptyUserObj = {email:'', name:'', surname:'', birth_date:''}
+const emptyUserObj = {email: null, name: null, surname: null, birth_date: null}
 function Users() {
     const [ usersData, setUserData ] = useState([]);
     const [ editedItem, setEditedItem ] = useState('');
@@ -94,9 +94,8 @@ function Users() {
     const addUser = useCallback(async () => {
         try {
             const { data } = await apiRequests.addAUser(newUserObject);
-            console.log({ data })
             await getAllUsers();
-            setNewUserObject(emptyUserObj);
+            setNewUserObject({ ...emptyUserObj });
         } catch (e) {
             console.log({ e })
         }
@@ -130,7 +129,7 @@ function Users() {
             <TitleText>Users manager</TitleText>
             <AddUserForm>
                 { Object.keys(newUserObject).map((key) =>
-                    <Input key={key} type={key === 'birth_date' ? 'date' : key === 'email' ? 'email' : 'text'} value={ newUserObject[key] } onChange={ handleChangeNewUserInput(key) } label={ key }
+                    <Input key={key} type={key === 'birth_date' ? 'date' : key === 'email' ? 'email' : 'text'} value={ newUserObject[key] || '' } onChange={ handleChangeNewUserInput(key) } label={ key }
                            error={ error }/>) }
                 <IconButton aria-label="edit" onClick={ addUser }>
                     <AddCircleOutline/>
