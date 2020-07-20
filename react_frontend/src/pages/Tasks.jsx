@@ -11,6 +11,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 import DoneIcon from '@material-ui/icons/Done';
 import CloseIcon from '@material-ui/icons/Close';
+import GoBackIcon from '@material-ui/icons/ArrowBackIos';
 
 import * as apiRequests from '../api/requests';
 import Input from '../components/Input';
@@ -31,6 +32,13 @@ const AddTaskForm = styled.div`
   display: flex;
 `;
 
+const GoBackButton = ({ onClick }) => (
+        <IconButton aria-label="go back" onClick={ onClick }>
+            <GoBackIcon/>
+            Go back
+        </IconButton>
+)
+
 const ListItemComponents = ({ name, status, task_id, isEdited, setEditedItem, handleEditItem, handleDeleteItem, statuses }) => {
     const [ nameValue, setNameValue ] = useState(name);
     const [ statusValue, setStatusValue ] = useState(status);
@@ -44,7 +52,11 @@ const ListItemComponents = ({ name, status, task_id, isEdited, setEditedItem, ha
     }, []);
     
     const LeftIcon = isEdited ? DoneIcon : EditIcon;
-    const LeftCallback = isEdited ? () => handleEditItem({ status: statusValue, task_id, name: nameValue }) : () => setEditedItem(task_id);
+    const LeftCallback = isEdited ? () => handleEditItem({
+        status: statusValue,
+        task_id,
+        name: nameValue
+    }) : () => setEditedItem(task_id);
     const RightIcon = isEdited ? CloseIcon : DeleteIcon;
     const RightCallback = isEdited ? handleCancelPress : () => handleDeleteItem(task_id);
     return (
@@ -61,14 +73,15 @@ const ListItemComponents = ({ name, status, task_id, isEdited, setEditedItem, ha
             </div>
             <div style={ { flex: 1 } }>
                 { isEdited ?
-                    <Input defaultValue={ statusValue } onChange={ handleEditStatusValue } error={ error } select SelectProps={{
-                        native: true,
-                    }}>
-                        {statuses.map((status) => (
-                            <option key={status.name} value={status.name}>
-                                {status.name}
+                    <Input defaultValue={ statusValue } onChange={ handleEditStatusValue } error={ error } select
+                           SelectProps={ {
+                               native: true,
+                           } }>
+                        { statuses.map((status) => (
+                            <option key={ status.name } value={ status.name }>
+                                { status.name }
                             </option>
-                        ))}
+                        )) }
                     </Input>
                     : <ListItemText
                         primary={ statusValue }
@@ -84,7 +97,7 @@ const ListItemComponents = ({ name, status, task_id, isEdited, setEditedItem, ha
 }
 
 
-function Tasks() {
+function Tasks({ history }) {
     const { userId } = useParams();
     const [ tasksData, setTaskData ] = useState([]);
     const [ statuses, setStatuses ] = useState([]);
@@ -135,7 +148,7 @@ function Tasks() {
         }
     }, []);
     
-    const handleEditItem = useCallback(async ({name, status, task_id }) => {
+    const handleEditItem = useCallback(async ({ name, status, task_id }) => {
         try {
             await apiRequests.editATask({ name, status, id: task_id });
             await getUserTasks();
@@ -147,6 +160,7 @@ function Tasks() {
     
     return (
         <Container>
+            <GoBackButton onClick={history.goBack}/>
             <TitleText>Tasks manager</TitleText>
             <AddTaskForm>
                 <Input value={ name } onChange={ handleChangeName } label="Add task" error={ error }/>
@@ -158,7 +172,8 @@ function Tasks() {
                 { tasksData.sort(({ task_id }, { task_id: task_id2 }) => task_id - task_id2).map(({ name, status, task_id }) => (
                     <ListItemComponents name={ name } status={ status } task_id={ task_id } key={ task_id }
                                         isEdited={ editedItem === task_id } handleDeleteItem={ handleDeleteItem }
-                                        handleEditItem={ handleEditItem } setEditedItem={ setEditedItem } statuses={statuses}
+                                        handleEditItem={ handleEditItem } setEditedItem={ setEditedItem }
+                                        statuses={ statuses }
                     />
                 )) }
             </List>

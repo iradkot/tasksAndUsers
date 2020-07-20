@@ -11,12 +11,8 @@ const App = () => {
     return (
         <Router>
             <Switch>
-                <Route path="/tasks/:userId">
-                    <Tasks/>
-                </Route>
-                <Route path="/">
-                    <Users/>
-                </Route>
+                <Route path="/tasks/:userId" component={Tasks}/>
+                <Route path="/" component={Users}/>
             </Switch>
         </Router>
     )
