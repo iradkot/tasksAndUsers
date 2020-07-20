@@ -22,11 +22,11 @@ export const getTasksStatuses = () => instance.get(routes.tasksStatuses);
 export const getUserTasks = (userId) => {
   return instance.get(routes.userTasks(userId));
 };
-export const addATask = ({ userId, description }) => {
-  return instance.post(routes.userTasks(userId), {description});
+export const addATask = ({ userId, name }) => {
+  return instance.post(routes.userTasks(userId), {name});
 };
-export const editATask = ({ description, id }) => {
-  return instance.put(routes.task(id), {description});
+export const editATask = ({ name, id }) => {
+  return instance.put(routes.task(id), {name});
 };
 export const deleteATask = ({ id }) => {
   return instance.delete(routes.task(id));

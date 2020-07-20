@@ -113,7 +113,7 @@ function Tasks() {
     
     const addTask = useCallback(async () => {
         try {
-            const { data } = await apiRequests.addATask({ name });
+            const { data } = await apiRequests.addATask({ userId, name });
             await getUserTasks();
             setName('');
         } catch (e) {
