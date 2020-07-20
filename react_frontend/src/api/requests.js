@@ -25,9 +25,9 @@ export const getUserTasks = (userId) => {
 export const addATask = ({ userId, name }) => {
   return instance.post(routes.userTasks(userId), {name});
 };
-export const editATask = ({ name, id }) => {
-  return instance.put(routes.task(id), {name});
+export const editATask = ({ name, status, id }) => {
+  return instance.put(routes.task(id), {name, status});
 };
-export const deleteATask = ({ id }) => {
+export const deleteATask = ({id}) => {
   return instance.delete(routes.task(id));
 };

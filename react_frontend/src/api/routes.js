@@ -5,5 +5,6 @@ export const user = (id) => `${users}/${id}`;
 
 export const tasksStatuses = `/tasks_statuses`;
 
-export const userTasks = (user_id) => `/tasks?user_id=${user_id}`;
-export const task = (user_id, id) => `${userTasks(user_id)}/${id}`;
+const tasks = 'tasks';
+export const userTasks = (user_id) => `/${tasks}?user_id=${user_id}`;
+export const task = (id) => `${tasks}/${id}`;

@@ -44,7 +44,7 @@ const ListItemComponents = ({ name, status, task_id, isEdited, setEditedItem, ha
     }, []);
     
     const LeftIcon = isEdited ? DoneIcon : EditIcon;
-    const LeftCallback = isEdited ? () => handleEditItem({ task_id, name: nameValue }) : () => setEditedItem(task_id);
+    const LeftCallback = isEdited ? () => handleEditItem({ status: statusValue, task_id, name: nameValue }) : () => setEditedItem(task_id);
     const RightIcon = isEdited ? CloseIcon : DeleteIcon;
     const RightCallback = isEdited ? handleCancelPress : () => handleDeleteItem(task_id);
     return (
@@ -135,9 +135,9 @@ function Tasks() {
         }
     }, []);
     
-    const handleEditItem = useCallback(async ({ task_id, name }) => {
+    const handleEditItem = useCallback(async ({name, status, task_id }) => {
         try {
-            await apiRequests.editATask({ name, id: task_id });
+            await apiRequests.editATask({ name, status, id: task_id });
             await getUserTasks();
             setEditedItem('');
         } catch (e) {

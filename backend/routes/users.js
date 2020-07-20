@@ -5,9 +5,7 @@ const pool = require('../db');
 //create a user
 router.post('/', async(req, res) => {
     try {
-        console.log('req.body', req.body);
         const { email, name, surname, birth_date } = req.body;
-        console.log({ email, name, surname, birth_date })
         const newTask = await pool.query(
             "INSERT INTO users (email, name, surname, birth_date) VALUES($1, $2, $3, $4) RETURNING *",
             [email, name, surname, birth_date]

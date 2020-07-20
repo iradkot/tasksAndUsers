@@ -35,7 +35,6 @@ const ListItemComponents = ({ userData, user_id, isEdited, setEditedItem, handle
     const [ editedUserData, setEditedUserData ] = useState(userData);
     const [ error, setError ] = useState('');
     const handleEditUserData = (dataKey) => (e) => {
-        console.log('e.target.value', e.target.value);
         setEditedUserData({ ...editedUserData, [dataKey]: e.target.value });
     };
     const handleCancelPress = useCallback(() => {
