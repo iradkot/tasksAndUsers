@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-    Link,
-} from "react-router-dom";
+import { Link, } from "react-router-dom";
 import styled from 'styled-components';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -46,7 +44,10 @@ const ListItemComponents = ({ userData, user_id, isEdited, setEditedItem, handle
     }, []);
     
     const LeftIcon = isEdited ? DoneIcon : EditIcon;
-    const LeftCallback = isEdited ? () => handleEditItem({ user_id, newUserObject: editedUserData }) : () => setEditedItem(user_id);
+    const LeftCallback = isEdited ? () => handleEditItem({
+        user_id,
+        newUserObject: editedUserData
+    }) : () => setEditedItem(user_id);
     const RightIcon = isEdited ? CloseIcon : DeleteIcon;
     const RightCallback = isEdited ? handleCancelPress : () => handleDeleteItem(user_id);
     return (
@@ -55,13 +56,17 @@ const ListItemComponents = ({ userData, user_id, isEdited, setEditedItem, handle
                 <LeftIcon/>
             </IconButton>
             { Object.keys(editedUserData).map((key) =>
-                isEdited ?
-                    <Input value={ editedUserData[key] } type={key === 'birth_date' ? 'date' : key === 'email' ? 'email' : 'text'} onChange={ handleEditUserData(key) } error={ error }/>
-                    : <ListItemText
-                        primary={ `${ editedUserData[key] }` }
-                    />
+                <div style={ { flex: 1 } }>
+                    { isEdited ?
+                        <Input value={ editedUserData[key] }
+                               type={ key === 'birth_date' ? 'date' : key === 'email' ? 'email' : 'text' }
+                               onChange={ handleEditUserData(key) } error={ error }/>
+                        : <ListItemText
+                            primary={ `${ editedUserData[key] }` }
+                        /> }
+                </div>
             ) }
-            {!isEdited && <Link to={`/tasks/${user_id}`}>Go to tasks</Link>}
+            { !isEdited && <Link to={ `/tasks/${ user_id }` }>Go to tasks</Link> }
             <ListItemSecondaryAction>
                 <IconButton edge="end" aria-label="delete" onClick={ RightCallback }>
                     <RightIcon/>
@@ -71,7 +76,8 @@ const ListItemComponents = ({ userData, user_id, isEdited, setEditedItem, handle
     );
 }
 
-const emptyUserObj = {email: null, name: null, surname: null, birth_date: null}
+const emptyUserObj = { email: null, name: null, surname: null, birth_date: null }
+
 function Users() {
     const [ usersData, setUserData ] = useState([]);
     const [ editedItem, setEditedItem ] = useState('');
@@ -129,7 +135,8 @@ function Users() {
             <TitleText>Users manager</TitleText>
             <AddUserForm>
                 { Object.keys(newUserObject).map((key) =>
-                    <Input key={key} type={key === 'birth_date' ? 'date' : key === 'email' ? 'email' : 'text'} value={ newUserObject[key] || '' } onChange={ handleChangeNewUserInput(key) } label={ key }
+                    <Input key={ key } type={ key === 'birth_date' ? 'date' : key === 'email' ? 'email' : 'text' }
+                           value={ newUserObject[key] || '' } onChange={ handleChangeNewUserInput(key) } label={ key }
                            error={ error }/>) }
                 <IconButton aria-label="edit" onClick={ addUser }>
                     <AddCircleOutline/>
