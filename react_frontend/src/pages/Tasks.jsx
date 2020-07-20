@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-    useParams
-} from "react-router-dom";
+import { useParams } from "react-router-dom";
 import styled from 'styled-components';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -34,8 +32,8 @@ const AddTaskForm = styled.div`
 `;
 
 const ListItemComponents = ({ name, status, task_id, isEdited, setEditedItem, handleEditItem, handleDeleteItem }) => {
-    const [nameValue, setNameValue] = useState(name);
-    const [statusValue, setStatusValue] = useState(status);
+    const [ nameValue, setNameValue ] = useState(name);
+    const [ statusValue, setStatusValue ] = useState(status);
     const [ error, setError ] = useState('');
     const handleEditNameValue = useCallback((e) => setNameValue(e.target.value), []);
     const handleEditStatusValue = useCallback((e) => setStatusValue(e.target.value), []);
@@ -46,7 +44,7 @@ const ListItemComponents = ({ name, status, task_id, isEdited, setEditedItem, ha
     }, []);
     
     const LeftIcon = isEdited ? DoneIcon : EditIcon;
-    const LeftCallback = isEdited ? () => handleEditItem({task_id, name: nameValue}) : () => setEditedItem(task_id);
+    const LeftCallback = isEdited ? () => handleEditItem({ task_id, name: nameValue }) : () => setEditedItem(task_id);
     const RightIcon = isEdited ? CloseIcon : DeleteIcon;
     const RightCallback = isEdited ? handleCancelPress : () => handleDeleteItem(task_id);
     return (
@@ -54,16 +52,20 @@ const ListItemComponents = ({ name, status, task_id, isEdited, setEditedItem, ha
             <IconButton edge="start" aria-label="edit" onClick={ LeftCallback }>
                 <LeftIcon/>
             </IconButton>
-            { isEdited ?
-                <Input value={ nameValue } onChange={ handleEditNameValue } error={ error }/>
-                : <ListItemText
-                    primary={ name }
-                /> }
-            { isEdited ?
-                <Input value={ statusValue } onChange={ handleEditStatusValue } error={ error }/>
-                : <ListItemText
-                    primary={ statusValue }
-                /> }
+            <div style={ { flex: 1 } }>
+                { isEdited ?
+                    <Input value={ nameValue } onChange={ handleEditNameValue } error={ error }/>
+                    : <ListItemText
+                        primary={ name }
+                    /> }
+            </div>
+            <div style={ { flex: 1 } }>
+                { isEdited ?
+                    <Input value={ statusValue } onChange={ handleEditStatusValue } error={ error }/>
+                    : <ListItemText
+                        primary={ statusValue }
+                    /> }
+            </div>
             <ListItemSecondaryAction>
                 <IconButton edge="end" aria-label="delete" onClick={ RightCallback }>
                     <RightIcon/>
@@ -133,9 +135,9 @@ function Tasks() {
                     <AddCircleOutline/>
                 </IconButton>
             </AddTaskForm>
-            <List style={{ width: '80%' }}>
-                { tasksData.sort(({ task_id }, {task_id: task_id2 }) => task_id- task_id2).map(({ name, status, task_id }) => (
-                    <ListItemComponents name={ name } status={status} task_id={ task_id } key={ task_id }
+            <List style={ { width: '80%' } }>
+                { tasksData.sort(({ task_id }, { task_id: task_id2 }) => task_id - task_id2).map(({ name, status, task_id }) => (
+                    <ListItemComponents name={ name } status={ status } task_id={ task_id } key={ task_id }
                                         isEdited={ editedItem === task_id } handleDeleteItem={ handleDeleteItem }
                                         handleEditItem={ handleEditItem } setEditedItem={ setEditedItem }
                     />
