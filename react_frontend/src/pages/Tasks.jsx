@@ -32,7 +32,6 @@ const AddTaskForm = styled.div`
 `;
 
 const ListItemComponents = ({ name, status, task_id, isEdited, setEditedItem, handleEditItem, handleDeleteItem, statuses }) => {
-    console.log({ statuses });
     const [ nameValue, setNameValue ] = useState(name);
     const [ statusValue, setStatusValue ] = useState(status);
     const [ error, setError ] = useState('');
