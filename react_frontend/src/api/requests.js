@@ -16,7 +16,7 @@ export const deleteAUser = ({ id }) => {
 };
 
 // TASKS STATUSES
-export const getTasksStatuses = () => instance.get(routes.tasksStatuses)
+export const getTasksStatuses = () => instance.get(routes.tasksStatuses);
 
 // TASKS
 export const getUserTasks = (userId) => {

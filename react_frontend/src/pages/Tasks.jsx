@@ -31,7 +31,8 @@ const AddTaskForm = styled.div`
   display: flex;
 `;
 
-const ListItemComponents = ({ name, status, task_id, isEdited, setEditedItem, handleEditItem, handleDeleteItem }) => {
+const ListItemComponents = ({ name, status, task_id, isEdited, setEditedItem, handleEditItem, handleDeleteItem, statuses }) => {
+    console.log({ statuses });
     const [ nameValue, setNameValue ] = useState(name);
     const [ statusValue, setStatusValue ] = useState(status);
     const [ error, setError ] = useState('');
@@ -61,7 +62,15 @@ const ListItemComponents = ({ name, status, task_id, isEdited, setEditedItem, ha
             </div>
             <div style={ { flex: 1 } }>
                 { isEdited ?
-                    <Input value={ statusValue } onChange={ handleEditStatusValue } error={ error }/>
+                    <Input defaultValue={ statusValue } onChange={ handleEditStatusValue } error={ error } select SelectProps={{
+                        native: true,
+                    }}>
+                        {statuses.map((status) => (
+                            <option key={status.name} value={status.name}>
+                                {status.name}
+                            </option>
+                        ))}
+                    </Input>
                     : <ListItemText
                         primary={ statusValue }
                     /> }
@@ -79,6 +88,7 @@ const ListItemComponents = ({ name, status, task_id, isEdited, setEditedItem, ha
 function Tasks() {
     const { userId } = useParams();
     const [ tasksData, setTaskData ] = useState([]);
+    const [ statuses, setStatuses ] = useState([]);
     const [ editedItem, setEditedItem ] = useState('');
     const [ name, setName ] = useState('');
     const [ error, setError ] = useState('');
@@ -88,6 +98,15 @@ function Tasks() {
         try {
             const { data } = await apiRequests.getUserTasks(userId);
             setTaskData(data);
+        } catch (e) {
+            console.log({ e })
+        }
+    }, []);
+    
+    const getTasksStatuses = useCallback(async () => {
+        try {
+            const { data } = await apiRequests.getTasksStatuses();
+            setStatuses(data);
         } catch (e) {
             console.log({ e })
         }
@@ -105,6 +124,7 @@ function Tasks() {
     
     useEffect(() => {
         getUserTasks();
+        getTasksStatuses();
     }, []);
     
     const handleDeleteItem = useCallback(async (task_id) => {
@@ -139,7 +159,7 @@ function Tasks() {
                 { tasksData.sort(({ task_id }, { task_id: task_id2 }) => task_id - task_id2).map(({ name, status, task_id }) => (
                     <ListItemComponents name={ name } status={ status } task_id={ task_id } key={ task_id }
                                         isEdited={ editedItem === task_id } handleDeleteItem={ handleDeleteItem }
-                                        handleEditItem={ handleEditItem } setEditedItem={ setEditedItem }
+                                        handleEditItem={ handleEditItem } setEditedItem={ setEditedItem } statuses={statuses}
                     />
                 )) }
             </List>

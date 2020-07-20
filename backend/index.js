@@ -13,8 +13,10 @@ app.use(express.json());
 
 const usersRouter = require('./routes/users');
 const tasksRouter = require('./routes/tasks');
+const tasksStatusesRouter = require('./routes/tasks_statuses');
 app.use('/users', usersRouter);
 app.use('/tasks', tasksRouter);
+app.use('/tasks_statuses', tasksStatusesRouter);
 
 app.listen(port, () => {
     console.log(`server has started on port ${port}`)
