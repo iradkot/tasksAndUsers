@@ -6,7 +6,7 @@ const pool = require('../db');
 const queryUserTasks = `SELECT tasks.task_id, tasks.name, tasks_statuses.name as status FROM tasks
     FULL OUTER JOIN users on tasks.user_id = users.user_id
     FULL OUTER JOIN tasks_statuses on tasks.status_id = tasks_statuses.status_id
-WHERE users.user_id = $1;`;
+WHERE users.user_id = $1 AND tasks.name IS NOT NULL;`;
 
 //get all user tasks (gets user_id in request)
 router.get('/', async (req,res) => {
