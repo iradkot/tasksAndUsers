@@ -2,15 +2,22 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-//get all tasks
+// noinspection SqlResolve
+const queryUserTasks = `SELECT tasks.task_id, tasks.name, tasks_statuses.name as status FROM tasks
+    FULL OUTER JOIN users on tasks.user_id = users.user_id
+    FULL OUTER JOIN tasks_statuses on tasks.status_id = tasks_statuses.status_id
+WHERE users.user_id = $1;`;
+
+//get all user tasks (gets user_id in request)
 router.get('/', async (req,res) => {
     try {
-        const allTasks = await pool.query('SELECT * FROM tasks');
+        const { user_id } = req.query;
+        const allTasks = await pool.query(queryUserTasks, [user_id]);
         res.json(allTasks.rows)
     } catch (e) {
         console.error(e);
     }
-})
+});
 //get a task
 router.get('/:id', async (req,res) => {
     try {

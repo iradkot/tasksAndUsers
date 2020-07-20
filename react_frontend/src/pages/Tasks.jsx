@@ -33,17 +33,20 @@ const AddTaskForm = styled.div`
   display: flex;
 `;
 
-const ListItemComponents = ({ description, task_id, isEdited, setEditedItem, handleEditItem, handleDeleteItem }) => {
-    const [descValue, setDescValue] = useState(description);
+const ListItemComponents = ({ name, status, task_id, isEdited, setEditedItem, handleEditItem, handleDeleteItem }) => {
+    const [nameValue, setNameValue] = useState(name);
+    const [statusValue, setStatusValue] = useState(status);
     const [ error, setError ] = useState('');
-    const handleEditDescValue = useCallback((e) => setDescValue(e.target.value), []);
+    const handleEditNameValue = useCallback((e) => setNameValue(e.target.value), []);
+    const handleEditStatusValue = useCallback((e) => setStatusValue(e.target.value), []);
     const handleCancelPress = useCallback(() => {
-        setDescValue(description);
+        setNameValue(name);
+        setStatusValue(status);
         setEditedItem('')
     }, []);
     
     const LeftIcon = isEdited ? DoneIcon : EditIcon;
-    const LeftCallback = isEdited ? () => handleEditItem({task_id, description: descValue}) : () => setEditedItem(task_id);
+    const LeftCallback = isEdited ? () => handleEditItem({task_id, name: nameValue}) : () => setEditedItem(task_id);
     const RightIcon = isEdited ? CloseIcon : DeleteIcon;
     const RightCallback = isEdited ? handleCancelPress : () => handleDeleteItem(task_id);
     return (
@@ -52,9 +55,14 @@ const ListItemComponents = ({ description, task_id, isEdited, setEditedItem, han
                 <LeftIcon/>
             </IconButton>
             { isEdited ?
-                <Input value={ descValue } onChange={ handleEditDescValue } error={ error }/>
+                <Input value={ nameValue } onChange={ handleEditNameValue } error={ error }/>
                 : <ListItemText
-                    primary={ description + '-' + task_id }
+                    primary={ name }
+                /> }
+            { isEdited ?
+                <Input value={ statusValue } onChange={ handleEditStatusValue } error={ error }/>
+                : <ListItemText
+                    primary={ statusValue }
                 /> }
             <ListItemSecondaryAction>
                 <IconButton edge="end" aria-label="delete" onClick={ RightCallback }>
@@ -70,13 +78,14 @@ function Tasks() {
     const { userId } = useParams();
     const [ tasksData, setTaskData ] = useState([]);
     const [ editedItem, setEditedItem ] = useState('');
-    const [ description, setDescription ] = useState('');
+    const [ name, setName ] = useState('');
     const [ error, setError ] = useState('');
-    const handleChangeDesc = useCallback((e) => setDescription(e.target.value), []);
+    const handleChangeName = useCallback((e) => setName(e.target.value), []);
     
-    const getAllTasks = useCallback(async () => {
+    const getUserTasks = useCallback(async () => {
         try {
-            const { data } = await apiRequests.getAllTasks();
+            const { data } = await apiRequests.getUserTasks(userId);
+            console.log({data });
             setTaskData(data);
         } catch (e) {
             console.log({ e })
@@ -85,32 +94,31 @@ function Tasks() {
     
     const addTask = useCallback(async () => {
         try {
-            const { data } = await apiRequests.addATask({ description });
-            console.log({ data })
-            await getAllTasks();
-            setDescription('');
+            const { data } = await apiRequests.addATask({ name });
+            await getUserTasks();
+            setName('');
         } catch (e) {
             console.log({ e })
         }
-    }, [ description ]);
+    }, [ name ]);
     
     useEffect(() => {
-        getAllTasks();
+        getUserTasks();
     }, []);
     
     const handleDeleteItem = useCallback(async (task_id) => {
         try {
             await apiRequests.deleteATask({ id: task_id });
-            await getAllTasks();
+            await getUserTasks();
         } catch (e) {
             console.log({ e });
         }
     }, []);
     
-    const handleEditItem = useCallback(async ({ task_id, description }) => {
+    const handleEditItem = useCallback(async ({ task_id, name }) => {
         try {
-            await apiRequests.editATask({ description, id: task_id });
-            await getAllTasks();
+            await apiRequests.editATask({ name, id: task_id });
+            await getUserTasks();
             setEditedItem('');
         } catch (e) {
             console.log({ e });
@@ -121,14 +129,14 @@ function Tasks() {
         <Container>
             <TitleText>Tasks manager</TitleText>
             <AddTaskForm>
-                <Input value={ description } onChange={ handleChangeDesc } label="Add task" error={ error }/>
+                <Input value={ name } onChange={ handleChangeName } label="Add task" error={ error }/>
                 <IconButton aria-label="edit" onClick={ addTask }>
                     <AddCircleOutline/>
                 </IconButton>
             </AddTaskForm>
             <List style={{ width: '80%' }}>
-                { tasksData.sort(({ task_id }, {task_id: task_id2 }) => task_id- task_id2).map(({ description, task_id }) => (
-                    <ListItemComponents description={ description } task_id={ task_id } key={ task_id }
+                { tasksData.sort(({ task_id }, {task_id: task_id2 }) => task_id- task_id2).map(({ name, status, task_id }) => (
+                    <ListItemComponents name={ name } status={status} task_id={ task_id } key={ task_id }
                                         isEdited={ editedItem === task_id } handleDeleteItem={ handleDeleteItem }
                                         handleEditItem={ handleEditItem } setEditedItem={ setEditedItem }
                     />

@@ -15,13 +15,15 @@ export const deleteAUser = ({ id }) => {
     return instance.delete(routes.user(id));
 };
 
+// TASKS STATUSES
+export const getTasksStatuses = () => instance.get(routes.tasksStatuses)
 
 // TASKS
-export const getAllTasks = () => {
-  return instance.get(routes.tasks);
+export const getUserTasks = (userId) => {
+  return instance.get(routes.userTasks(userId));
 };
-export const addATask = ({ description }) => {
-  return instance.post(routes.tasks, {description});
+export const addATask = ({ userId, description }) => {
+  return instance.post(routes.userTasks(userId), {description});
 };
 export const editATask = ({ description, id }) => {
   return instance.put(routes.task(id), {description});

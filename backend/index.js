@@ -12,47 +12,9 @@ app.use(express.json());
 // ROUTES //
 
 const usersRouter = require('./routes/users');
+const tasksRouter = require('./routes/tasks');
 app.use('/users', usersRouter);
- //get all tasks
-app.get('/tasks', async (req,res) => {
-    try {
-        const allTasks = await pool.query('SELECT * FROM tasks');
-        res.json(allTasks.rows)
-    } catch (e) {
-        console.error(e);
-    }
-})
- //get a task
-app.get('/tasks/:id', async (req,res) => {
-    try {
-        const { id } = req.params;
-        const task = await pool.query('SELECT * FROM tasks WHERE task_id = $1', [id]);
-        res.json(task.rows[0])
-    } catch (e) {
-        console.error(e);
-    }
-})
- //update a task
-app.put('/tasks/:id', async (req,res) => {
-    try {
-        const { id } = req.params;
-        const { description } = req.body;
-        const updateTask = await pool.query('UPDATE tasks SET description = $1 WHERE task_id = $2 RETURNING *', [description, id]);
-        res.json(updateTask.rows[0]);
-    } catch (e) {
-        console.error(e);
-    }
-})
- //delete a task
-app.delete('/tasks/:id', async (req,res) => {
-    try {
-        const { id } = req.params;
-        const deleteTask = await pool.query('DELETE FROM tasks WHERE task_id=$1', [id]);
-        res.json(`Task-${id} was deleted.`);
-    } catch (e) {
-        console.error(e);
-    }
-})
+app.use('/tasks', tasksRouter);
 
 app.listen(port, () => {
     console.log(`server has started on port ${port}`)
